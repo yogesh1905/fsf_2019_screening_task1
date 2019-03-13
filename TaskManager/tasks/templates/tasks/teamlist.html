@@ -1,0 +1,17 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+  <body>
+  	<h1>Team List</h1>
+  	<ul>
+  	{%for user in users%}
+  		<li>{{user.username}}</li>
+  	{%endfor%}
+ 	 </ul>
+
+  </body>
+</html>
+
+{% endblock %}
