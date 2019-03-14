@@ -9,12 +9,33 @@ from django.contrib.auth.models import User
 # Create your views here.
 @login_required(login_url="/accounts/login")
 def team_list(req):
-	users = User.objects.all()
-	return render(req, 'tasks/teamlist.html', {'users': users})
+	usergroups = JoinTable.objects.filter(person_id=req.user.id)
+	return render(req, 'tasks/teamlist.html', {'usergroups': usergroups})
 
-def team_info(req):
-	return HttpResponse('Are you amazed?')
+@login_required(login_url="/accounts/login")
+def create_team(req):
+	print(req.method)
+	if req.method == 'POST':
+		newGroup = Group(creator=req.user.username)
+		newGroup.save()
+		newEntry = JoinTable(person_id=req.user.id, group_id=newGroup.id)
+		newEntry.save()
+		print('/tasks/' + str(newGroup.id) + '/')
+		return redirect('/tasks/' + str(newGroup.id) + '/')
 
+@login_required(login_url="/accounts/login")
+def member_list(req, gid):
+	memberIds = JoinTable.objects.filter(group_id=gid)
+	group = Group.objects.filter(id=gid)
+	if group:
+		group = group[0]
+	if memberIds:
+		members = []
+		for memberId in memberIds:
+			members.append(User.objects.filter(id=memberId.person_id)[0].username)
+		return render(req, 'tasks/memberlist.html', {'members': members, 'creator': group.creator})
+	else:
+		return HttpResponse('Page Not Found')
 # def article_detail(req, slug):
 # 	#return HttpResponse(slug)
 # 	article = Article.objects.get(slug=slug)

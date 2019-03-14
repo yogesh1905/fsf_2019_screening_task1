@@ -6,6 +6,10 @@ class JoinTable(models.Model):
 	group_id = models.IntegerField()
 
 
+class Group(models.Model):
+	creator = models.CharField(max_length=100)
+
+
 class Task(models.Model):
 	title = models.CharField(max_length=100)
 	description = models.CharField(max_length=400)

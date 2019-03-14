@@ -1,0 +1,17 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+  <body>
+  	<h1>Creator: {{creator}}</h1>
+  	<ul>
+  	{%for member in members%}
+  		<li>{{member}}</li>
+  	{%endfor%}
+ 	 </ul>
+
+  </body>
+</html>
+
+{% endblock %}

@@ -6,8 +6,8 @@
   <body>
   	<h1>Team List</h1>
   	<ul>
-  	{%for user in users%}
-  		<li>{{user.username}}</li>
+  	{%for usergroup in usergroups%}
+  		<li><a href="{% url 'tasks:memberlist' gid=usergroup.group_id %}">Team {{forloop.counter}}</li>
   	{%endfor%}
  	 </ul>
 

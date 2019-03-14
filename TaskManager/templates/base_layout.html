@@ -7,14 +7,20 @@
   </head>
   <body>
     <header class="wrapper">
-    <h1><a href="{% url 'home' %}">Got to home</a></h1>
       <nav>
         <ul>
+          <li><a href="{% url 'tasks:teams' %}">Home</a></li>
           {% if user.is_authenticated %}
           <li>
             <form class="logout-link" action="{% url 'accounts:logout' %}" method='post'>
               {% csrf_token %}
               <button type="submit">Logout</button>
+            </form>
+          </li>
+           <li>
+            <form class="create-team" action="{% url 'tasks:createteam' %}" method='post'>
+              {% csrf_token %}
+              <button type="submit">Create Team</button>
             </form>
           </li>
           {% else %}
