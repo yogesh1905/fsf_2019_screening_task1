@@ -9,6 +9,7 @@
   		{% if user == creator %}
   		<li><a href="{% url 'tasks:adduser' gid=groupid %}">Add User</a></li>
   		{% endif %}
+      <li><a href="{% url 'tasks:grptask' gid=groupid %}">New Task</a></li>
   	</ul>
    </nav>
   	<h1>Creator: {{creator}}</h1>
@@ -21,7 +22,17 @@
       </div>
     {%endfor%}
   </div> 
-
+  <h1>Team Tasks</h1>
+   <div class='tasks'>
+    {%for task in tasks%}
+      <div class='task'>
+        <h2><a href="{% url 'tasks:grptaskdetail' gid=groupid tid=task.id%}">{{task.title}}</a></h2>
+        <p>{{task.snippet}}</p>
+        <p>{{task.status}}</p>
+        <p class="author">added by {{task.assignee}}</p>
+      </div>
+    {%endfor%}
+  </div>
   </body>
 </html>
 

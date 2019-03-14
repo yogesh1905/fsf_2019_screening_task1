@@ -36,7 +36,8 @@ def member_list(req, gid):
 			members = []
 			for memberId in memberIds:
 				members.append(User.objects.filter(id=memberId.person_id)[0].username)
-			return render(req, 'tasks/memberlist.html', {'members': members, 'creator': group.creator, 'groupid': gid, 'user':req.user.username})
+			tasks = Task.objects.filter(group_id=gid)
+			return render(req, 'tasks/memberlist.html', {'members': members, 'creator': group.creator, 'groupid': gid, 'user':req.user.username, 'tasks': tasks})
 		else:
 			return HttpResponse('Page Not Found')
 	else:
@@ -116,3 +117,37 @@ def edit_task(req, tid):
 	else:
 		form = forms.CreateTask()
 	return render(req, 'tasks/edittask.html', {'form': form, 'taskId': tid}, )	
+
+
+@login_required(login_url="/accounts/login")
+def add_group_task(req, gid):
+	curruser = JoinTable.objects.filter(group_id=gid, person_id=req.user.id)
+	if curruser:
+		if req.method == 'POST':
+			form = forms.CreateTask(req.POST)
+			if form.is_valid():
+				# save article to db
+				instance = form.save(commit=False)
+				instance.assignee = req.user.username
+				instance.group_id = gid
+				instance.save()
+				return redirect('/tasks/' + str(gid) + '/')
+		else:
+			form = forms.CreateTask()
+		return render(req, 'tasks/create_group_task.html', {'form': form, 'group_id': gid})
+
+	else:
+		return HttpResponse("You are not Authorized")
+
+
+
+@login_required(login_url="/accounts/login")
+def group_task_detail(req, gid, tid):
+	task = Task.objects.filter(id=tid, group_id=gid)
+	curr = JoinTable.objects.filter(group_id=gid, person_id=req.user.id)
+	if task and curr:
+		task = task[0]
+		curr_user = req.user.username
+		return render(req, 'tasks/group_task_detail.html', {'task': task, 'curr_user': curr_user, 'group_id':gid})
+	else:
+		return HttpResponse("Task does not exists")	

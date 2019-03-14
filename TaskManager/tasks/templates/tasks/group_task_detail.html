@@ -1,0 +1,24 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+
+<div class='task-detail'>
+  <div class='task'>
+  	<h1>{{task.title}}</h2>
+  	<h2>{{task.status}}</h2>
+  	<p>Created by: {{task.assignee}}</p>
+  	<p>{{task.description}}</p>
+  </div>
+  {% if curr_user == task.assignee %}
+  <nav style="margin-top: 40px;text-align: center;">
+  	<form action="#" method="post">
+  	{% csrf_token %}
+  	  <button type="submit">Edit</button>
+  	</form>
+  </nav>
+  {% endif %}
+</div>
+
+
+
+{% endblock %}

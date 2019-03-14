@@ -12,4 +12,7 @@ urlpatterns = [
    	path('add-task/', views.add_individual_task, name="indtask"),
    	path('view-task/<int:tid>/', views.task_detail, name="taskdetail"),
    	path('edit-task/<int:tid>/', views.edit_task, name='edittask'),
+   	path('<int:gid>/add-task/', views.add_group_task, name="grptask"),
+   	path('<int:gid>/view-task/<int:tid>', views.group_task_detail, name="grptaskdetail"),
+   	# path('<int:gid>/edit-task/<int:tid>', views.group_edit_task, name="grpedittask"),
 ]
