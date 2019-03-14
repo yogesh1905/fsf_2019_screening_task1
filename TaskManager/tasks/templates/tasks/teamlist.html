@@ -1,17 +1,30 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-<!DOCTYPE html>
-<html>
-  <body>
-  	<h1>Team List</h1>
-  	<ul>
-  	{%for usergroup in usergroups%}
-  		<li><a href="{% url 'tasks:memberlist' gid=usergroup.group_id %}">Team {{forloop.counter}}</li>
-  	{%endfor%}
- 	 </ul>
-
-  </body>
-</html>
+  	<nav>
+  		<ul>
+  			<li><a href="{% url 'tasks:indtask' %}">New Task</a></li>
+  		</ul>
+  	</nav>
+  	<h1>Your Tasks</h1>
+   <div class='tasks'>
+	  {%for task in tasks%}
+	  	<div class='task'>
+	  	  <h2><a href="{% url 'tasks:taskdetail' tid=task.id%}">{{task.title}}</a></h2>
+	  	  <p>{{task.snippet}}</p>
+	  	  <p>{{task.status}}</p>
+	  	  <p class="author">added by {{task.assignee}}</p>
+	  	</div>
+	  {%endfor%}
+	</div>
+  	<h1>Your Teams</h1>
+	<div class='tasks'>
+	  {%for usergroup in usergroups%}
+	  	<div class='task'>
+	  	  <h2><a href="{% url 'tasks:memberlist' gid=usergroup.group_id %}">Team {{forloop.counter}}</a></h2>
+	  	  <p class="author">added by creator</p>
+	  	</div>
+	  {%endfor%}
+	</div>  	
 
 {% endblock %}

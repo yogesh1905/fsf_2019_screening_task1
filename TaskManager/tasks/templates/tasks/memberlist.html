@@ -4,14 +4,26 @@
 <!DOCTYPE html>
 <html>
   <body>
-  	<h1>Creator: {{creator}}</h1>
+    <nav>
   	<ul>
-  	{%for member in members%}
-  		<li>{{member}}</li>
-  	{%endfor%}
- 	 </ul>
+  		{% if user == creator %}
+  		<li><a href="{% url 'tasks:adduser' gid=groupid %}">Add User</a></li>
+  		{% endif %}
+  	</ul>
+   </nav>
+  	<h1>Creator: {{creator}}</h1>
+    <h2>Team Members</h2>
+    <br>
+  	<div class='tasks'>
+    {%for member in members%}
+      <div class='task'>
+        <h2>{{member}}</h2>
+      </div>
+    {%endfor%}
+  </div> 
 
   </body>
 </html>
 
 {% endblock %}
+
