@@ -102,21 +102,27 @@ def task_detail(req, tid):
 
 @login_required(login_url="/accounts/login")
 def edit_task(req, tid):
-	if req.method == 'POST':
-		form = forms.CreateTask(req.POST)
-		# req.POST = req.POST.copy()
-		# req.POST['assignee'] = req.user.username
-		if form.is_valid():
-			# save article to db
-			instance = Task.objects.filter(id=tid)[0]
-			instance.title = req.POST.get("title")
-			instance.status = req.POST.get("status")
-			instance.description = req.POST.get("description")
-			instance.save()
-			return redirect('tasks:teams')
+	task = Task.objects.filter(id=tid)
+	if task:
+		task = task[0]
+		if task.assignee == req.user.username:
+			if req.method == 'POST':
+				form = forms.CreateTask(req.POST)
+				if form.is_valid():
+					# save article to db
+					instance = Task.objects.filter(id=tid)[0]
+					instance.title = req.POST.get("title")
+					instance.status = req.POST.get("status")
+					instance.description = req.POST.get("description")
+					instance.save()
+					return redirect('tasks:teams')
+			else:
+				form = forms.CreateTask()
+			return render(req, 'tasks/edittask.html', {'form': form, 'taskId': tid})
+		else:
+			return HttpResponse("Not Authorized")
 	else:
-		form = forms.CreateTask()
-	return render(req, 'tasks/edittask.html', {'form': form, 'taskId': tid}, )	
+		return HttpResponse("Not found")	
 
 
 @login_required(login_url="/accounts/login")
@@ -146,8 +152,84 @@ def group_task_detail(req, gid, tid):
 	task = Task.objects.filter(id=tid, group_id=gid)
 	curr = JoinTable.objects.filter(group_id=gid, person_id=req.user.id)
 	if task and curr:
-		task = task[0]
-		curr_user = req.user.username
-		return render(req, 'tasks/group_task_detail.html', {'task': task, 'curr_user': curr_user, 'group_id':gid})
+		if req.method == 'GET':
+			assigned_users = AssignTask.objects.filter(task_id=tid)
+			id_list = []
+			for user in assigned_users:
+				id_list.append(user.person_id)
+			assigned_users = User.objects.filter(id__in=id_list)
+			task = task[0]
+			curr_user = req.user
+			all_comments = Comment.objects.filter(task_id=tid).order_by('-id')
+			return render(req, 'tasks/group_task_detail.html', {'task': task, 'curr_user': curr_user, 'group_id':gid, 'task_id': tid, 'assigned_users': assigned_users, 'all_comments': all_comments})
+		else:
+			newComment = Comment(task_id=tid, comment=req.POST.get('comment'), commenter=req.user.username)
+			newComment.save()
+			return redirect('/tasks/' + str(gid) + '/view-task/' + str(tid) + '/')
 	else:
 		return HttpResponse("Task does not exists")	
+
+
+@login_required(login_url="/accounts/login")
+def group_edit_task(req, gid, tid):
+	task = Task.objects.filter(id=tid, group_id=gid)
+	if task:
+		task = task[0]
+		if task.assignee == req.user.username:
+			if req.method == 'POST':
+				form = forms.CreateTask(req.POST)
+				if form.is_valid():
+					# save article to db
+					instance = Task.objects.filter(id=tid)[0]
+					instance.title = req.POST.get("title")
+					instance.status = req.POST.get("status")
+					instance.description = req.POST.get("description")
+					instance.save()
+					return redirect('/tasks/' + str(gid) + '/')
+			else:
+				form = forms.CreateTask()
+			return render(req, 'tasks/group_edit_task.html', {'form': form, 'task_id': tid, 'group_id': gid})
+		else:
+			return HttpResponse("Not Authorized")
+	else:
+		return HttpResponse("Not found")	
+
+
+@login_required(login_url="/accounts/login")
+def group_assign_task(req, gid, tid):
+	task = Task.objects.filter(id=tid, group_id=gid)
+	if task:
+		task = task[0]
+		if task.assignee == req.user.username:
+			already_assigned = AssignTask.objects.filter(task_id=tid)
+			assigned_id = []
+			for person in already_assigned:
+				assigned_id.append(person.person_id)	
+			not_assigned = User.objects.exclude(id__in=assigned_id)
+			temp_id = []
+			for user in not_assigned:
+				temp_id.append(user.id)
+			not_assigned = JoinTable.objects.filter(person_id__in=temp_id, group_id=gid)
+			temp_id = []
+			for user in not_assigned:
+				temp_id.append(user.person_id)
+			not_assigned = User.objects.filter(id__in=temp_id)
+			return render(req, 'tasks/assign_user.html', {'not_assigned': not_assigned, 'group_id': gid, 'task_id': tid})
+		else:
+			return HttpResponse("Not Authorized")
+	else:
+		return HttpResponse("Task not Found")
+
+
+
+@login_required(login_url="/accounts/login")
+def group_task_assigned(req, gid, tid, pid):
+	assigned_user = AssignTask(task_id=tid, person_id=pid)
+	assigned_user.save()
+	return redirect('/tasks/' + str(gid) + '/view-task/' + str(tid) + '/')
+
+
+
+
+
+

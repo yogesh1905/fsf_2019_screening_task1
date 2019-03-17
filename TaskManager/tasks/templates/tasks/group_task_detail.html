@@ -9,16 +9,65 @@
   	<p>Created by: {{task.assignee}}</p>
   	<p>{{task.description}}</p>
   </div>
-  {% if curr_user == task.assignee %}
+  {% if curr_user.username == task.assignee %}
   <nav style="margin-top: 40px;text-align: center;">
-  	<form action="#" method="post">
-  	{% csrf_token %}
-  	  <button type="submit">Edit</button>
-  	</form>
+  	  <a href="{% url 'tasks:grpedittask' gid=group_id tid=task_id%}">Edit</a>
+      <br>
+      <br>
+      <a href="{% url 'tasks:grpassntask' gid=group_id tid=task_id%}">Assign Task</a>
   </nav>
   {% endif %}
+  <form style="margin: 30px 0 0 30px;" action="{% url 'tasks:grptaskdetail' gid=group_id tid=task_id %}" method='post'>
+    {% csrf_token %}
+    <textarea style="border-radius: 10px;resize: none;padding: 10px 10px 10px 10px; font-size: 18px;" name="comment" rows="2" cols="40"></textarea>
+    <br>
+    <button type="submit">Comment</button>
+  </form>
+  <br>
+   {% if all_comments %}
+   <button id="btn" class="Clicked" style="background: none; color: white; border: 1px solid #00dba0;border-radius: 10px;font-size: 16px;cursor: pointer;padding: 5px; margin: 10px 10px 10px 10px;">View Comments</button>
+   <div class="block" style="display: none; width:550px;margin-left: 40px;">
+     {% for comment in all_comments %}
+     <div style="padding:10px;border: 1px solid #00dba0;border-radius: 10px;">
+       <p>{{comment.comment}}</p>
+       <p style="position: relative; left: 400px;">{{comment.commenter}}</p>
+     </div>
+     {% endfor %}
+   </div>
+   {% endif %}
+   {% if assigned_users %}
+  <h1>Assigned Users</h1>
+  <div class='tasks'>
+  {%for user in assigned_users%}
+      <div class='task'>
+        <h2>{{user.username}}</h2>
+      </div>
+  {%endfor%}
+  </div>
+  {% endif %}
 </div>
-
+<script>
+  const titleinput = document.querySelector('textarea[name=comment]');
+  console.log(titleinput)
+  titleinput.addEventListener('keyup', (e) =>{
+    titleinput.value = titleinput.value
+                     .replace(/[\n\r]+/g, "")
+                     .replace(/(.{60})/g, "$1\n");
+  });
+  btn = document.getElementById('btn');
+  dis = document.getElementsByClassName('block')[0];
+  btn.addEventListener('click', ()=>{
+        if (btn.className == 'Clicked'){
+            btn.className = 'NotClicked';
+            dis.style.display = 'block';
+        }
+        else{
+            btn.className = 'Clicked';
+            dis.style.display = 'none';
+        }
+    
+    });
+</script>
 
 
 {% endblock %}

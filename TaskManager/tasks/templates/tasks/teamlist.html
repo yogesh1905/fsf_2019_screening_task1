@@ -17,6 +17,7 @@
 	  	</div>
 	  {%endfor%}
 	</div>
+  	{% if usergroups %}
   	<h1>Your Teams</h1>
 	<div class='tasks'>
 	  {%for usergroup in usergroups%}
@@ -25,6 +26,7 @@
 	  	  <p class="author">added by creator</p>
 	  	</div>
 	  {%endfor%}
-	</div>  	
+	</div> 
+	{% endif %} 	
 
 {% endblock %}

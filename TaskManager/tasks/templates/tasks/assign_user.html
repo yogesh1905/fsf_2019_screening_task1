@@ -1,0 +1,33 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+  <head>
+  	<style>
+  		label
+  		{
+  			float: left;
+  			clear: both;
+  		}
+  		button
+  		{
+  			margin-left: 50px;
+  	
+  		}
+  	</style>
+  </head>
+  <body>
+  	<h1>User List</h1>
+  	{%for user in not_assigned%}
+  		<form action="{% url 'tasks:grpassndtask' gid=group_id tid=task_id pid=user.id%}" method='post'>
+	  		{% csrf_token %}
+	  		<label>{{user.username}}</label>
+	  		<button type="submit">ASSIGN USER</button>
+	  	</form>
+  	{%endfor%}
+
+  </body>
+</html>
+
+{% endblock %}

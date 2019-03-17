@@ -13,6 +13,9 @@ urlpatterns = [
    	path('view-task/<int:tid>/', views.task_detail, name="taskdetail"),
    	path('edit-task/<int:tid>/', views.edit_task, name='edittask'),
    	path('<int:gid>/add-task/', views.add_group_task, name="grptask"),
-   	path('<int:gid>/view-task/<int:tid>', views.group_task_detail, name="grptaskdetail"),
-   	# path('<int:gid>/edit-task/<int:tid>', views.group_edit_task, name="grpedittask"),
+   	path('<int:gid>/view-task/<int:tid>/', views.group_task_detail, name="grptaskdetail"),
+   	path('<int:gid>/edit-task/<int:tid>/', views.group_edit_task, name="grpedittask"),
+   	path('<int:gid>/assign-task/<int:tid>/', views.group_assign_task, name='grpassntask'),
+   	path('<int:gid>/assign-task/<int:tid>/<int:pid>/', views.group_task_assigned, name='grpassndtask'),
+   	
 ]

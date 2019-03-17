@@ -22,6 +22,7 @@
       </div>
     {%endfor%}
   </div> 
+  {% if tasks %}
   <h1>Team Tasks</h1>
    <div class='tasks'>
     {%for task in tasks%}
@@ -33,6 +34,7 @@
       </div>
     {%endfor%}
   </div>
+  {% endif %}
   </body>
 </html>
 

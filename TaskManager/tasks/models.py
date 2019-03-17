@@ -31,3 +31,6 @@ class Comment(models.Model):
 	commenter = models.CharField(max_length=100, default="")
 	
 
+class AssignTask(models.Model):
+	task_id = models.IntegerField()
+	person_id = models.IntegerField()

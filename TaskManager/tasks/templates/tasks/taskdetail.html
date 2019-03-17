@@ -11,10 +11,7 @@
   </div>
   {% if curr_user == task.assignee %}
   <nav style="margin-top: 40px;text-align: center;">
-  	<form action="{% url 'tasks:edittask' tid=task.id%}" method="post">
-  	{% csrf_token %}
-  	  <button type="submit">Edit</button>
-  	</form>
+  	  <a href="{% url 'tasks:edittask' tid=task.id%}">Edit</a>
   </nav>
   {% endif %}
 </div>
