@@ -24,6 +24,8 @@ a, a:hover, a:visited{
     margin: 0 auto;   
 }
 
+
+
 div.wrapper h1{
     text-align: center;
     margin: 100px auto;
@@ -49,10 +51,14 @@ nav li{
 nav button{
     background: none;
     color: #fff;
+    border:1px solid #00dba0;
+    padding: 10px;
+    border-radius: 4px;
     cursor: pointer;
-    border: 0;
     font-size: 1em;
 }
+
+
 
 .tasks{
     display: grid;
@@ -87,9 +93,6 @@ nav button{
     padding: 0;
 }
 
-.task-detail .task img{
-    max-width: 100%;
-}
 
 .task-detail .task h2{
     text-align: center;
@@ -115,12 +118,6 @@ nav button{
 }
 
 
-a.highlight{
-    border:1px solid #00dba0;
-    padding: 10px;
-    border-radius: 4px;
-    color: #00dba0;
-}
 
 .helptext, .helptext ul{
     margin: 0 auto 20px;
@@ -152,3 +149,4 @@ a.highlight{
     cursor: pointer;
     margin-top: 30px;
 }
+

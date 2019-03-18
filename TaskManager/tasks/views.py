@@ -12,7 +12,12 @@ def team_list(req):
 	tasks = Task.objects.filter(group_id=-1, assignee=req.user.username)
 	print(tasks)
 	usergroups = JoinTable.objects.filter(person_id=req.user.id)
+	group_id_list = []
+	for group in usergroups:
+		group_id_list.append(group.group_id)
+	usergroups = Group.objects.filter(id__in=group_id_list)
 	return render(req, 'tasks/teamlist.html', {'usergroups': usergroups, 'tasks':tasks})
+
 
 @login_required(login_url="/accounts/login")
 def create_team(req):
@@ -23,7 +28,8 @@ def create_team(req):
 		newEntry = JoinTable(person_id=req.user.id, group_id=newGroup.id)
 		newEntry.save()
 		print('/tasks/' + str(newGroup.id) + '/')
-		return redirect('/tasks/' + str(newGroup.id) + '/')
+		return render(req, 'tasks/memberlist.html', {'creator': req.user.username, 'groupid': newGroup.id, 'curruser': req.user.username, 'newTeam': 'yes'})
+
 
 @login_required(login_url="/accounts/login")
 def member_list(req, gid):
@@ -37,7 +43,7 @@ def member_list(req, gid):
 			for memberId in memberIds:
 				members.append(User.objects.filter(id=memberId.person_id)[0].username)
 			tasks = Task.objects.filter(group_id=gid)
-			return render(req, 'tasks/memberlist.html', {'members': members, 'creator': group.creator, 'groupid': gid, 'user':req.user.username, 'tasks': tasks})
+			return render(req, 'tasks/memberlist.html', {'members': members, 'creator': group.creator, 'groupid': gid, 'curruser':req.user.username, 'tasks': tasks})
 		else:
 			return HttpResponse('Page Not Found')
 	else:
@@ -92,12 +98,21 @@ def add_individual_task(req):
 @login_required(login_url="/accounts/login")
 def task_detail(req, tid):
 	task = Task.objects.filter(id=tid)
-	if task:
+	if task and task[0].assignee == req.user.username:
 		task = task[0]
-		curr_user = req.user.username
-		return render(req, 'tasks/taskdetail.html', {'task': task, 'curr_user': curr_user})
+		if req.method == 'GET':
+			curr_user = req.user.username
+			all_comments = Comment.objects.filter(task_id=tid).order_by('-id')
+			return render(req, 'tasks/taskdetail.html', {'task': task, 'curr_user': curr_user, 'all_comments': all_comments})
+		else:
+			newComment = Comment(task_id=tid, comment=req.POST.get('comment'), commenter=req.user.username)
+			newComment.save()
+			return redirect('/tasks/view-task/' + str(tid) + '/')
+
 	else:
 		return HttpResponse("Task does not exists")
+	
+
 
 
 @login_required(login_url="/accounts/login")

@@ -19,9 +19,9 @@
   {% endif %}
   <form style="margin: 30px 0 0 30px;" action="{% url 'tasks:grptaskdetail' gid=group_id tid=task_id %}" method='post'>
     {% csrf_token %}
-    <textarea style="border-radius: 10px;resize: none;padding: 10px 10px 10px 10px; font-size: 18px;" name="comment" rows="2" cols="40"></textarea>
+    <textarea placeholder="Start a discussion..." style="border-radius: 10px;resize: none;padding: 10px 10px 10px 10px; font-size: 18px;" name="comment" rows="2" cols="40"></textarea>
     <br>
-    <button type="submit">Comment</button>
+    <button style="margin-top: 10px;" type="submit">Comment</button>
   </form>
   <br>
    {% if all_comments %}

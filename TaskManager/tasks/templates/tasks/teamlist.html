@@ -22,8 +22,8 @@
 	<div class='tasks'>
 	  {%for usergroup in usergroups%}
 	  	<div class='task'>
-	  	  <h2><a href="{% url 'tasks:memberlist' gid=usergroup.group_id %}">Team {{forloop.counter}}</a></h2>
-	  	  <p class="author">added by creator</p>
+	  	  <h2><a href="{% url 'tasks:memberlist' gid=usergroup.id %}">Team {{forloop.counter}}</a></h2>
+	  	  <p class="author">created by {{usergroup.creator}}</p>
 	  	</div>
 	  {%endfor%}
 	</div> 
