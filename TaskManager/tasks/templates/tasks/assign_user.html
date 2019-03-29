@@ -5,16 +5,27 @@
 <html>
   <head>
   	<style>
-  		label
-  		{
-  			float: left;
-  			clear: both;
-  		}
-  		button
-  		{
-  			margin-left: 50px;
-  	
-  		}
+  		.userlabel
+      {
+        left: 40%;
+        position: absolute;
+        float: left;
+        clear: both;
+        padding-top: 10px;
+
+      }
+      .adduser
+      {
+        background: none;
+        position: relative;
+        left: 60%;
+        cursor: pointer;
+        border:1px solid #00dba0;
+        padding: 10px;
+        border-radius: 4px;
+        color: #00dba0;
+    
+      }
   	</style>
   </head>
   <body>
@@ -22,10 +33,14 @@
   	{%for user in not_assigned%}
   		<form action="{% url 'tasks:grpassndtask' gid=group_id tid=task_id pid=user.id%}" method='post'>
 	  		{% csrf_token %}
-	  		<label>{{user.username}}</label>
-	  		<button type="submit">ASSIGN USER</button>
+	  		<label class="userlabel">{{user.username}}</label>
+	  		<button class="adduser" type="submit">ASSIGN USER</button>
 	  	</form>
+      <br>
   	{%endfor%}
+    {% if not not_assigned %}
+    <h2 style="text-align: center;color: red">No one left to assign</h2>
+    {% endif %}
 
   </body>
 </html>

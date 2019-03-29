@@ -5,14 +5,25 @@
 <html>
   <head>
   	<style>
-  		label
+  		.userlabel
   		{
-  			float: left;
+  			left: 40%;
+        position: absolute;
+        float: left;
   			clear: both;
+        padding-top: 10px;
+
   		}
-  		button
+  		.adduser
   		{
-  			margin-left: 50px;
+  			background: none;
+        position: relative;
+        left: 60%;
+        cursor: pointer;
+        border:1px solid #00dba0;
+        padding: 10px;
+        border-radius: 4px;
+        color: #00dba0;
   	
   		}
   	</style>
@@ -22,11 +33,14 @@
   	{%for nouser in nousers%}
   		<form action="{% url 'tasks:added' gid=groupid pid=nouser.id%}" method='post'>
 	  		{% csrf_token %}
-	  		<label>{{nouser.username}}</label>
-	  		<button type="submit">ADD USER</button>
+	  		<label class="userlabel">{{nouser.username}}</label>
+	  		<button class="adduser" type="submit">ADD USER</button>
 	  	</form>
+      <br>
   	{%endfor%}
-
+    {% if not nousers %}
+    <h2 style="text-align: center;color: red">No one left to add</h2>
+    {% endif %}
   </body>
 </html>
 

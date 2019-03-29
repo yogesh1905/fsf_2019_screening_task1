@@ -28,7 +28,7 @@ def create_team(req):
 		newEntry = JoinTable(person_id=req.user.id, group_id=newGroup.id)
 		newEntry.save()
 		print('/tasks/' + str(newGroup.id) + '/')
-		return render(req, 'tasks/memberlist.html', {'creator': req.user.username, 'groupid': newGroup.id, 'curruser': req.user.username, 'newTeam': 'yes'})
+		return render(req, 'tasks/memberlist.html', {'members': [req.user] ,'creator': req.user.username, 'groupid': newGroup.id, 'curruser': req.user.username, 'newTeam': 'yes'})
 
 
 @login_required(login_url="/accounts/login")

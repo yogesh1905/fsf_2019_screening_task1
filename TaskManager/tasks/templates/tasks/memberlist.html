@@ -4,15 +4,15 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <nav>
+    <nav id="userop">
   	<ul>
       {% if newTeam %}
       <p style="text-align: center; color: green; border: 1px solid green; border-radius: 10px;width: 500px; padding: 10px 10px 10px 10px;">Team Created Successfuly!!!</p>
       {% endif %}
   		{% if curruser == creator %}
-  		<li><a href="{% url 'tasks:adduser' gid=groupid %}">Add User</a></li>
+  		<li><a id="addUser" href="{% url 'tasks:adduser' gid=groupid %}">Add User</a></li>
   		{% endif %}
-      <li><a href="{% url 'tasks:grptask' gid=groupid %}">New Task</a></li>
+      <li><a id="newTask" href="{% url 'tasks:grptask' gid=groupid %}">New Task</a></li>
   	</ul>
    </nav>
   	<h1>Creator: {{creator}}</h1>

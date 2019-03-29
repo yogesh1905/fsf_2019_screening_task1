@@ -11,17 +11,17 @@
   </div>
   {% if curr_user.username == task.assignee %}
   <nav style="margin-top: 40px;text-align: center;">
-  	  <a href="{% url 'tasks:grpedittask' gid=group_id tid=task_id%}">Edit</a>
-      <br>
-      <br>
-      <a href="{% url 'tasks:grpassntask' gid=group_id tid=task_id%}">Assign Task</a>
+  	  <li><a id="edit" href="{% url 'tasks:grpedittask' gid=group_id tid=task_id%}">Edit</a></li>
+      <li><a id="assign" href="{% url 'tasks:grpassntask' gid=group_id tid=task_id%}">Assign Task</a></li>
   </nav>
   {% endif %}
   <form style="margin: 30px 0 0 30px;" action="{% url 'tasks:grptaskdetail' gid=group_id tid=task_id %}" method='post'>
     {% csrf_token %}
-    <textarea placeholder="Start a discussion..." style="border-radius: 10px;resize: none;padding: 10px 10px 10px 10px; font-size: 18px;" name="comment" rows="2" cols="40"></textarea>
+    <textarea placeholder="Start a discussion..." style="opacity: 0.80; border: 1px solid #00dba0;border-radius: 10px;resize: none;padding: 10px 10px 10px 10px; font-size: 18px;" name="comment" rows="2" cols="40"></textarea>
     <br>
+    <nav>
     <button style="margin-top: 10px;" type="submit">Comment</button>
+    </nav>
   </form>
   <br>
    {% if all_comments %}
@@ -30,7 +30,7 @@
      {% for comment in all_comments %}
      <div style="padding:10px;border: 1px solid #00dba0;border-radius: 10px;">
        <p>{{comment.comment}}</p>
-       <p style="position: relative; left: 400px;">{{comment.commenter}}</p>
+       <p style="color: #00dba0;position: relative; left: 400px;">{{comment.commenter}}</p>
      </div>
      {% endfor %}
    </div>

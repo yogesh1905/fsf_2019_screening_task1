@@ -7,6 +7,7 @@ body{
 
 body *{
     font-family: Ubuntu;
+
 }
 
 h1, h2, h3, h4, h5{
@@ -18,10 +19,21 @@ a, a:hover, a:visited{
     color: #fff;
     text-decoration: none;
 }
+.fixed{
+    background-color: black;
+    position: fixed;
+    top:0;
+    left: 0;
+    overflow: hidden;
+    width: 100%;
+    z-index: 2; 
+}
 
 .wrapper{
     max-width: 960px;
     margin: 0 auto;   
+    padding: 100px;
+    margin-top: 10px; 
 }
 
 
@@ -32,11 +44,6 @@ div.wrapper h1{
     font-size: 2.4em;
 }
 
-header{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 20px 0;
-}
 
 nav{
     justify-self: end;
@@ -149,4 +156,33 @@ nav button{
     cursor: pointer;
     margin-top: 30px;
 }
+#edit, #assign{
+    color: #00dba0;
+    border: 1px solid #00dba0;
+    border-radius: 5px;
+    padding: 5px 5px 5px 5px;
 
+}
+
+#addUser, #newTask{
+    color: #00dba0;
+    font-size: 18px;
+    border: 1px solid #00dba0;
+    border-radius: 10px;
+    padding: 10px 60px 10px 60px;
+
+
+}
+#userop{
+    margin-left: 20%;
+}
+
+#imglogo{
+    position: relative;
+    top: 10px;
+}
+
+#logoutId{
+    position: relative;
+    left:1100px;
+}

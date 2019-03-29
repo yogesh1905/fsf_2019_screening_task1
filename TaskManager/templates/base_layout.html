@@ -1,4 +1,5 @@
 {%load static from staticfiles%}
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -6,22 +7,21 @@
   	<link rel="stylesheet" href="{%static 'style.css'%}">
   </head>
   <body>
-    <header class="wrapper">
-      <div class="fixed">
+    <div class="fixed">
       <nav>
         <ul>
           {% if user.is_authenticated %}
-          <li><a href="{% url 'tasks:teams' %}">Home</a></li>
-          <li>
-            <form class="logout-link" action="{% url 'accounts:logout' %}" method='post'>
-              {% csrf_token %}
-              <button type="submit">Logout</button>
-            </form>
-          </li>
+          <li><a id="imglogo" href="{% url 'tasks:teams' %}"><img src="{% static 'logo.png' %}"/></a></li>
            <li>
             <form class="create-team" action="{% url 'tasks:createteam' %}" method='post'>
               {% csrf_token %}
-              <button type="submit">Create Team</button>
+              <button  type="submit">Create Team</button>
+            </form>
+          </li>
+          <li>
+            <form class="logout-link" action="{% url 'accounts:logout' %}" method='post'>
+              {% csrf_token %}
+              <button id="logoutId" type="submit">Logout</button>
             </form>
           </li>
           {% else %}
@@ -35,7 +35,6 @@
         </ul>
       </nav>
     </div>
-    </header>
   	<div class='wrapper'>
   	  {% block content %}
   	  {% endblock %}
