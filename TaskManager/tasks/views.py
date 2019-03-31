@@ -5,24 +5,31 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from . import forms
 
+# Current views handles all the requests related to tasks and teams
+# @login_required used before every function to make sure that no unauthorized access takes place
 
-# Create your views here.
+
+# Handles the request for home page of the user
 @login_required(login_url="/accounts/login")
 def team_list(req):
 	tasks = Task.objects.filter(group_id=-1, assignee=req.user.username)
-	print(tasks)
+
+	# Quering for the list of groups the current user belongs to
 	usergroups = JoinTable.objects.filter(person_id=req.user.id)
 	group_id_list = []
 	for group in usergroups:
 		group_id_list.append(group.group_id)
 	usergroups = Group.objects.filter(id__in=group_id_list)
+	
 	return render(req, 'tasks/teamlist.html', {'usergroups': usergroups, 'tasks':tasks})
 
 
+
+# Handles the post request when a user creates a team
 @login_required(login_url="/accounts/login")
 def create_team(req):
-	print(req.method)
 	if req.method == 'POST':
+		# Creates the group and saves it in the database
 		newGroup = Group(creator=req.user.username)
 		newGroup.save()
 		newEntry = JoinTable(person_id=req.user.id, group_id=newGroup.id)
@@ -31,9 +38,14 @@ def create_team(req):
 		return render(req, 'tasks/memberlist.html', {'members': [req.user] ,'creator': req.user.username, 'groupid': newGroup.id, 'curruser': req.user.username, 'newTeam': 'yes'})
 
 
+
+
+# Handles the request for the team page (the page containing the details of the respective team) of a user
 @login_required(login_url="/accounts/login")
 def member_list(req, gid):
+	# Checking if the current user belongs to the group with group_id = gid
 	if JoinTable.objects.filter(group_id=gid, person_id=req.user.id):
+		# Quering for the list of users belonging to the current group
 		memberIds = JoinTable.objects.filter(group_id=gid)
 		group = Group.objects.filter(id=gid)
 		if group:
@@ -42,19 +54,24 @@ def member_list(req, gid):
 			members = []
 			for memberId in memberIds:
 				members.append(User.objects.filter(id=memberId.person_id)[0].username)
+			# Quering for the list of task belonging to the current group
 			tasks = Task.objects.filter(group_id=gid)
 			return render(req, 'tasks/memberlist.html', {'members': members, 'creator': group.creator, 'groupid': gid, 'curruser':req.user.username, 'tasks': tasks})
 		else:
-			return HttpResponse('Page Not Found')
+			return render(req, 'tasks/404.html')
 	else:
-		return HttpResponse("Not Authorized")
+		return render(req, 'tasks/404.html')
 
 
+
+# Handles the request for the page containing the list of possible users that can be added to the current team 
 @login_required(login_url="/accounts/login")
 def add_user(req, gid):
 	if req.method == 'GET':
+		# Checking if the current user belongs to the group with group_id = gid
 		currmem = JoinTable.objects.filter(group_id=gid)
 		if currmem:
+			# Quering for the list of possible users that can be added
 			searchedgrp = Group.objects.filter(id=gid)[0]
 			if req.user.username == searchedgrp.creator:
 				arr = []
@@ -63,25 +80,29 @@ def add_user(req, gid):
 				nousers = User.objects.exclude(id__in=arr)
 				return render(req, 'tasks/adduser.html', {'nousers': nousers, 'groupid': gid})
 			else:
-				return HttpResponse('Not Authorized')
+				return render(req, 'tasks/404.html')
 		else:
-			return HttpResponse('Group Does Not exist')
+			return render(req, 'tasks/404.html')
 
-	
+
+
+# Handles the post request when a user tries to add another user to his team	
 @login_required(login_url="/accounts/login")
 def added(req, gid, pid):
 	if req.method == 'POST':
+		# Saving the user to the database
 		newEntry = JoinTable(person_id=pid, group_id=gid)
 		newEntry.save()
 		return redirect('/tasks/' + str(gid) + '/')
 
 
+
+
+# Handles the post and get request for user adding individual task
 @login_required(login_url="/accounts/login")
 def add_individual_task(req):
 	if req.method == 'POST':
 		form = forms.CreateTask(req.POST)
-		# req.POST = req.POST.copy()
-		# req.POST['assignee'] = req.user.username
 		if form.is_valid():
 			# save article to db
 			instance = form.save(commit=False)
@@ -95,6 +116,7 @@ def add_individual_task(req):
 
 
 
+# Handles the request for page containing the details of individual tasks and also a post request for adding comment
 @login_required(login_url="/accounts/login")
 def task_detail(req, tid):
 	task = Task.objects.filter(id=tid)
@@ -106,15 +128,17 @@ def task_detail(req, tid):
 			return render(req, 'tasks/taskdetail.html', {'task': task, 'curr_user': curr_user, 'all_comments': all_comments})
 		else:
 			newComment = Comment(task_id=tid, comment=req.POST.get('comment'), commenter=req.user.username)
+			# Saving the comment to the db
 			newComment.save()
 			return redirect('/tasks/view-task/' + str(tid) + '/')
 
 	else:
-		return HttpResponse("Task does not exists")
+		return render(req, 'tasks/404.html')
 	
 
 
 
+# Handles the get and post request for user wanting to edit a task
 @login_required(login_url="/accounts/login")
 def edit_task(req, tid):
 	task = Task.objects.filter(id=tid)
@@ -124,7 +148,7 @@ def edit_task(req, tid):
 			if req.method == 'POST':
 				form = forms.CreateTask(req.POST)
 				if form.is_valid():
-					# save article to db
+					# save the edited article to db
 					instance = Task.objects.filter(id=tid)[0]
 					instance.title = req.POST.get("title")
 					instance.status = req.POST.get("status")
@@ -135,19 +159,22 @@ def edit_task(req, tid):
 				form = forms.CreateTask()
 			return render(req, 'tasks/edittask.html', {'form': form, 'taskId': tid})
 		else:
-			return HttpResponse("Not Authorized")
+			return render(req, 'tasks/404.html')
 	else:
-		return HttpResponse("Not found")	
+		return render(req, 'tasks/404.html')
 
 
+
+# Handles the request for a member belonging to a team and wanting to add a task in the team
 @login_required(login_url="/accounts/login")
 def add_group_task(req, gid):
 	curruser = JoinTable.objects.filter(group_id=gid, person_id=req.user.id)
+	# Checking if the current user belongs to the team
 	if curruser:
 		if req.method == 'POST':
 			form = forms.CreateTask(req.POST)
 			if form.is_valid():
-				# save article to db
+				# saving article to db
 				instance = form.save(commit=False)
 				instance.assignee = req.user.username
 				instance.group_id = gid
@@ -158,14 +185,17 @@ def add_group_task(req, gid):
 		return render(req, 'tasks/create_group_task.html', {'form': form, 'group_id': gid})
 
 	else:
-		return HttpResponse("You are not Authorized")
+		return render(req, 'tasks/404.html')
 
 
 
+
+# Handles the request for page containing the details of a task belonging to a particular team
 @login_required(login_url="/accounts/login")
 def group_task_detail(req, gid, tid):
 	task = Task.objects.filter(id=tid, group_id=gid)
 	curr = JoinTable.objects.filter(group_id=gid, person_id=req.user.id)
+	# Checking if the task and group exist and the task belongs to that group
 	if task and curr:
 		if req.method == 'GET':
 			assigned_users = AssignTask.objects.filter(task_id=tid)
@@ -182,19 +212,23 @@ def group_task_detail(req, gid, tid):
 			newComment.save()
 			return redirect('/tasks/' + str(gid) + '/view-task/' + str(tid) + '/')
 	else:
-		return HttpResponse("Task does not exists")	
+		return render(req, 'tasks/404.html')	
 
 
+
+
+# Handles the request for a member belong to a team and wanting to edit a team task
 @login_required(login_url="/accounts/login")
 def group_edit_task(req, gid, tid):
 	task = Task.objects.filter(id=tid, group_id=gid)
+	# Checking if the task exists
 	if task:
 		task = task[0]
 		if task.assignee == req.user.username:
 			if req.method == 'POST':
 				form = forms.CreateTask(req.POST)
 				if form.is_valid():
-					# save article to db
+					# saving the edited instance ot the article to db
 					instance = Task.objects.filter(id=tid)[0]
 					instance.title = req.POST.get("title")
 					instance.status = req.POST.get("status")
@@ -205,16 +239,20 @@ def group_edit_task(req, gid, tid):
 				form = forms.CreateTask()
 			return render(req, 'tasks/group_edit_task.html', {'form': form, 'task_id': tid, 'group_id': gid})
 		else:
-			return HttpResponse("Not Authorized")
+			return render(req, 'tasks/404.html')
 	else:
-		return HttpResponse("Not found")	
+		return render(req, 'tasks/404.html')	
 
 
+
+
+# Handles the get request of a task creator wanting to assign a task to the members of the team
 @login_required(login_url="/accounts/login")
 def group_assign_task(req, gid, tid):
 	task = Task.objects.filter(id=tid, group_id=gid)
 	if task:
 		task = task[0]
+		# Checking if the current user is the creator of the task
 		if task.assignee == req.user.username:
 			already_assigned = AssignTask.objects.filter(task_id=tid)
 			assigned_id = []
@@ -231,12 +269,14 @@ def group_assign_task(req, gid, tid):
 			not_assigned = User.objects.filter(id__in=temp_id)
 			return render(req, 'tasks/assign_user.html', {'not_assigned': not_assigned, 'group_id': gid, 'task_id': tid})
 		else:
-			return HttpResponse("Not Authorized")
+			return render(req, 'tasks/404.html')
 	else:
-		return HttpResponse("Task not Found")
+		return render(req, 'tasks/404.html')
 
 
 
+
+# Handles the post request of a task creator wanting to assign a task to the members of the team 
 @login_required(login_url="/accounts/login")
 def group_task_assigned(req, gid, tid, pid):
 	assigned_user = AssignTask(task_id=tid, person_id=pid)

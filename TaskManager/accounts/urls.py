@@ -1,3 +1,5 @@
+# current app handles user login, signup, logout and authentication part 
+
 from django.urls import path
 from . import views
 

@@ -1,11 +1,16 @@
 from django.urls import path
 from . import views
 
+# The current app (tasks) handles all the request to url starting with /tasks
+
+
+
+
 app_name = "tasks"
 
 urlpatterns = [
     path('', views.team_list, name='teams'),
-    path('create-team/', views.create_team, name="createteam"),  # will make a post request to create-team
+    path('create-team/', views.create_team, name="createteam"),  
     path('<int:gid>/', views.member_list, name="memberlist"),
     path('<int:gid>/add-user/', views.add_user, name="adduser"),
    	path('<int:gid>/add-user/<int:pid>/', views.added, name="added"),
