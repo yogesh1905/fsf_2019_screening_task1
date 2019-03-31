@@ -32,7 +32,7 @@
       <div class='task'>
         <h2><a href="{% url 'tasks:grptaskdetail' gid=groupid tid=task.id%}">{{task.title}}</a></h2>
         <p>{{task.snippet}}</p>
-        <p>{{task.status}}</p>
+        <p style="font-weight: bold;" class="status">{{task.status}}</p>
         <p class="author">added by {{task.assignee}}</p>
       </div>
     {%endfor%}
@@ -40,6 +40,20 @@
   {% endif %}
   </body>
 </html>
+<script>
+  st = document.getElementsByClassName('status');
+  for(i = 0;i < st.length;i++)
+  {
+      var color;
+      if(st[i].innerText == 'Done')
+        color = 'green';
+      else if(st[i].innerText == 'Planned')
+        color = 'red';
+      else
+        color = 'orange';
+      st[i].style.color = color;
+  }
+</script>
 
 {% endblock %}
 

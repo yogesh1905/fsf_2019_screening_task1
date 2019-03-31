@@ -5,7 +5,7 @@
 <div class='task-detail'>
   <div class='task'>
   	<h1>{{task.title}}</h2>
-  	<h2>{{task.status}}</h2>
+  	<h2 class="status">{{task.status}}</h2>
   	<p>Created by: {{task.assignee}}</p>
   	<p>{{task.description}}</p>
   </div>
@@ -47,6 +47,19 @@
   {% endif %}
 </div>
 <script>
+  st = document.getElementsByClassName('status');
+  console.log(st); 
+  for(i = 0;i < st.length;i++)
+  {
+      var color;
+      if(st[i].innerText == 'Done')
+        color = 'green';
+      else if(st[i].innerText == 'Planned')
+        color = 'red';
+      else
+        color = 'orange';
+      st[i].style.color = color;
+  }
   const titleinput = document.querySelector('textarea[name=comment]');
   console.log(titleinput)
   titleinput.addEventListener('keyup', (e) =>{
