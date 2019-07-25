@@ -9,7 +9,7 @@
   	<p>Created by: {{task.assignee}}</p>
   	<p>{{task.description}}</p>
   </div>
-  {% if curr_user.username == task.assignee %}
+  {% if curr_user == task.assignee %}
   <nav style="margin-top: 40px;text-align: center;">
   	  <li><a id="edit" href="{% url 'tasks:grpedittask' gid=group_id tid=task_id%}">Edit</a></li>
       <li><a id="assign" href="{% url 'tasks:grpassntask' gid=group_id tid=task_id%}">Assign Task</a></li>

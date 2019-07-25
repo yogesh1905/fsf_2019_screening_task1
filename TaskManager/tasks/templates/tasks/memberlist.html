@@ -9,7 +9,7 @@
       {% if newTeam %}
       <p style="text-align: center; color: green; border: 1px solid green; border-radius: 10px;width: 500px; padding: 10px 10px 10px 10px;">Team Created Successfuly!!!</p>
       {% endif %}
-  		{% if curruser == creator %}
+  		{% if curruser == creator.username %}
   		<li><a id="addUser" href="{% url 'tasks:adduser' gid=groupid %}">Add User</a></li>
   		{% endif %}
       <li><a id="newTask" href="{% url 'tasks:grptask' gid=groupid %}">New Task</a></li>
